@@ -1,7 +1,7 @@
 pipeline {
   environment {
     imagename = "bannimal/movieapp"
-    registryCredential = 'bannimal'
+    registryCredential = 'dockerhub_id'
     dockerImage = ''
   }
   agent any
