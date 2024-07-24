@@ -4,9 +4,7 @@ pipeline {
     registryCredential = 'dockerhub_id'
     dockerImage = ''
   }
-  agent {
-        docker { image 'cgr.dev/chainguard/docker-cli' }
-    }
+  agent any
   stages {
     stage('Cloning Git') {
       steps {
