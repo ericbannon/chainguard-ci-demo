@@ -1,6 +1,6 @@
 pipeline {
   environment {
-    imagename = "bannimal"
+    imagename = "bannimal/movieapp"
     registryCredential = 'bannimal'
     dockerImage = ''
   }
@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Cloning Git') {
       steps {
-        git([url: 'https://github.com/ericbannon/chainguard-ci-demo.git', credentialsId: 'ericbannon'])
+        git([url: 'https://github.com/ericbannon/chainguard-ci-demo.git'])
 
       }
     }
