@@ -1,5 +1,8 @@
 pipeline {
     // ① Select a Jenkins slave with Docker capabilities
+    agent {
+        label 'docker'
+    }
 
     environment {
         PRODUCT = 'chainguard'
