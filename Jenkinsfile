@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Cloning Git') {
       steps {
-        git([url: 'https://github.com/ericbannon/chainguard-ci-demo.git', credentialsId: 'github_ssh'])
+        git([url: 'https://github.com/ericbannon/chainguard-ci-demo.git', credentialsId: 'github_pat'])
 
       }
     }
