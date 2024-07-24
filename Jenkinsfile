@@ -10,12 +10,6 @@ pipeline {
         GIT_REPO = 'repo'
     }
 
-    options {
-        ansiColor('xterm')
-        skipDefaultCheckout()
-        buildDiscarder(logRotator(numToKeepStr: '10'))
-    }
-
     stages {
         // ② Checkout the right branch
         stage('Checkout') {
