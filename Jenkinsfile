@@ -1,25 +1,40 @@
 pipeline {
-    // ① Select a Jenkins slave with Docker capabilities
-    agent {
-        label 'docker'
-    }
+  environment {
+    imagename = "kevalnagda/flaskapp"
+    registryCredential = 'kevalnagda'
+    dockerImage = ''
+  }
+  agent any
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git([url: 'https://github.com/kevalnagda/movieapp.git', branch: 'main', credentialsId: 'kevalnagda'])
 
-    environment {
-        PRODUCT = 'chainguard'
-        GIT_HOST = 'somewhere'
-        GIT_REPO = 'repo'
+      }
     }
-
-    stages {
-        // ② Checkout the right branch
-        stage('Checkout') {
-            steps {
-                script {
-                    BRANCH_NAME = env.CHANGE_BRANCH ? env.CHANGE_BRANCH : env.BRANCH_NAME
-                    deleteDir()
-                    git url: "git@github.com:ericbannon/chainguard-ci-demo.git", branch: BRANCH_NAME
-                }
-            }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
         }
+      }
     }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+             dockerImage.push('latest')
+          }
+        }
+      }
+    }
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $imagename:$BUILD_NUMBER"
+         sh "docker rmi $imagename:latest"
+
+      }
+    }
+  }
 }
