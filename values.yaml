@@ -329,7 +329,7 @@ controller:
   # -- Allowed inbound IP for the agentListener service
   agentListenerLoadBalancerSourceRanges:
   - 0.0.0.0/0
-  # -- Disabled agent protocols
+  # -- Disabled agent additional
   disabledAgentProtocols:
     - JNLP-connect
     - JNLP2-connect
