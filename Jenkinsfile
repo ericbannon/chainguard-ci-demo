@@ -1,29 +1,40 @@
 pipeline {
-
-  agent any
-
-  options {
-
-    buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
-
+  environment {
+    imagename = "bannimal/movieapp"
+    registryCredential = 'dockerhub_id'
+    dockerImage = ''
   }
-
+  agent any
   stages {
-
-    stage('Hello') {
-
+    stage('Cloning Git') {
       steps {
-
-        sh '''
-
-          java -version
-
-        '''
+        git([url: 'https://github.com/ericbannon/chainguard-ci-demo.git', branch: 'main', credentialsId: 'github_pat'])
 
       }
-
     }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
+        }
+      }
+    }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+             dockerImage.push('latest')
+          }
+        }
+      }
+    }
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $imagename:$BUILD_NUMBER"
+         sh "docker rmi $imagename:latest"
 
+      }
+    }
   }
-
 }
