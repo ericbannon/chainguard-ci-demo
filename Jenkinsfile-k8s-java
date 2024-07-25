@@ -57,7 +57,7 @@ pipeline {
       } // end steps
     } // end stage "analyze with grype"
 
-    stage('Build Image & Push with Kaniko') {
+    stage('Build stable image and push to Prod') {
       steps {
         container(name: 'kaniko') {
             script {
