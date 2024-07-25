@@ -79,19 +79,8 @@ pipeline {
       }
     }
 
-     stage('Analyze with grype') {
+    stage('Analyze with grype') {
       steps {
-        // run grype with json output, use jq just to get severities, 
-        // concatenate all onto one line, if we find High or Critical 
-        // vulnerabilities, fail and kill the pipeline
-        //
-        // set -o pipefail enables the entire command to return the failure 
-        // in grype and still get the count of vulnerability types
-        // 
-        // you can change this from "high" to "critical" if you want to see 
-        // the command succeed since pvnovarese/ubuntu_sudo_test doesn't (as 
-        // of today) have any critical vulns in it, just high.
-        //
         script {
           try {
             // -f critical --> fail if "critical" vulns detected
@@ -111,7 +100,7 @@ pipeline {
       } // end steps
     } // end stage "analyze with grype"
 
-     stage('Re-tag as prod and push stable image to registry') {
+    stage('Re-tag as prod and push stable image to registry') {
       steps {
         container(name: 'kaniko', shell: '/busybox/sh') {
           sh '''#!/busybox/sh
