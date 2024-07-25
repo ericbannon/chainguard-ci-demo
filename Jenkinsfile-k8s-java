@@ -57,17 +57,16 @@ pipeline {
       } // end steps
     } // end stage "analyze with grype"
 
-    stage('Re-tag as prod and push stable image to registry') {
+    stage('Rebuild and push stable image to prod) {
       steps {
         container(name: 'kaniko', shell: '/busybox/sh') {
           sh '''#!/busybox/sh
 
-            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG}-prod --destination=${IMAGE_NAME}:latest
+            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:prod
           '''
-      } // end steps
-    } // end stage "retag as prod"
-
+        }
+      }
+    }
   } // end stages
 
-  }
 }
