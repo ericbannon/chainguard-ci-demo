@@ -78,5 +78,39 @@ pipeline {
         }
       }
     }
+
+    stage('Analyze with grype') {
+      steps {
+        script {
+          try {
+            // -f critical --> fail if "critical" vulns detected
+            // we don't really need to pipe into jq if we're just testing
+            // for vulns, but this way we can get some output to provide
+            // to devs as feedback.
+            //
+            sh 'set -o pipefail ; /usr/local/bin/grype -f high -q ${IMAGE_NAME}:${IMAGE_TAG}'
+          } catch (err) {
+            // if scan fails, clean up (delete the image) and fail the build
+            sh """
+              echo "Vulnerabilities detected in ${IMAGE_NAME}:${IMAGE_TAG}, cleaning up and failing build."
+              exit 1
+            """
+          } // end try/catch
+        } // end script
+      } // end steps
+    } // end stage "analyze with grype"
+
+    stage('Re-tag as prod and push stable image to registry') {
+      steps {
+        container(name: 'kaniko', shell: '/busybox/sh') {
+          sh '''#!/busybox/sh
+
+            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG}-prod --destination=${IMAGE_NAME}:latest
+          '''
+      } // end steps
+    } // end stage "retag as prod"
+
+  } // end stages
+
   }
 }

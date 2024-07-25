@@ -1,10 +1,12 @@
-FROM maven:3.9.0-eclipse-temurin-17 as build
+FROM cgr.dev/chainguard/maven:latest-dev as builder
+USER root
 WORKDIR /app
 COPY . .
 RUN mvn clean install
 
-FROM eclipse-temurin:17.0.6_10-jdk
+FROM cgr.dev/chainguard/jdk:latest-dev
+USER root
 WORKDIR /app
-COPY --from=build /app/target/demoapp.jar /app/
+COPY --from=builder /app/target/demoapp.jar /app/
 EXPOSE 8080
 CMD ["java", "-jar","demoapp.jar"]
