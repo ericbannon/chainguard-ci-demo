@@ -23,7 +23,7 @@ pipeline {
       }
     }
 
-    stage("Checkout from SCM and Build Application"){
+    stage("Build Application from SCM"){
       steps {
           git branch: 'test', credentialsId: 'github_pat', url: 'https://github.com/ericbannon/chainguard-ci-demo.git'
             }
@@ -57,12 +57,12 @@ pipeline {
       } // end steps
     } // end stage "analyze with grype"
 
-    stage('Rebuild and push stable image to prod) {
+    stage('Push stable image to prod') {
       steps {
         container(name: 'kaniko', shell: '/busybox/sh') {
           sh '''#!/busybox/sh
 
-            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:prod
+            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
           '''
         }
       }
