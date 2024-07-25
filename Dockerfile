@@ -1,25 +1,10 @@
-
-FROM python:3.8.10-buster
-
-WORKDIR /usr/src
-
-# ① Install some dependencies
-RUN apt-get update \
-    && apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# ② Copy the setup script
-COPY setup.py .
-
-# ③ Make sure some dummy files are present for the setup script
-RUN touch README.md
-RUN mkdir scripts && touch scripts/ghcli
-
-# ④ Install the project dependencies to run the tests
-RUN python -m pip install -e ".[test]"
-
-# ⑤ Copy the source code
+FROM maven:3.9.0-eclipse-temurin-17 as build
+WORKDIR /app
 COPY . .
+RUN mvn clean install
 
-# ⑥ Volume when container is used as volume container
-VOLUME /usr/src
+FROM eclipse-temurin:17.0.6_10-jdk
+WORKDIR /app
+COPY --from=build /app/target/demoapp.jar /app/
+EXPOSE 8080
+CMD ["java", "-jar","demoapp.jar"]
