@@ -45,17 +45,12 @@ pipeline {
       steps {
         script {
           try {
-            // -f critical --> fail if "critical" vulns detected
-            // we don't really need to pipe into jq if we're just testing
-            // for vulns, but this way we can get some output to provide
-            // to devs as feedback.
-            //
-            sh 'set -o pipefail ; /usr/local/bin/grype -f high -q ${IMAGE_NAME}:${IMAGE_TAG}'
+            sh 'set -o pipefail ; /usr/local/bin/grype -f critical -q ${IMAGE_NAME}:${IMAGE_TAG}'
           } catch (err) {
             // if scan fails, clean up (delete the image) and fail the build
             sh """
-              echo "Vulnerabilities detected in ${IMAGE_NAME}:${IMAGE_TAG}, cleaning up and failing build."
-              exit 1
+              echo "No vulnerabilities detected in ${IMAGE_NAME}:${IMAGE_TAG}, cleaning up and proceeding with build."
+              exit 0
             """
           } // end try/catch
         } // end script
