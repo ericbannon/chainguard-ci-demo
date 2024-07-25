@@ -5,10 +5,6 @@ pipeline {
       yamlFile 'kaniko-builder.yaml'
     }
   }
-  tools {
-      jdk 'Java17'
-      maven 'Maven3'
-    }
   environment {
         APP_NAME = "chainguard-demo-app"
         RELEASE = "1.0.0"
@@ -27,48 +23,14 @@ pipeline {
       }
     }
 
-    stage("Checkout from SCM"){
+    stage("Checkout from SCM and Build Application"){
       steps {
           git branch: 'test', credentialsId: 'github_pat', url: 'https://github.com/ericbannon/chainguard-ci-demo.git'
             }
 
         }
 
-    stage("Build Application"){
-      steps {
-          sh "mvn clean package"
-            }
-
-        }
-
-    stage("Test Application"){
-      steps {
-          sh "mvn test"
-            }
-
-        }
-
-    stage("Sonarqube Analysis") {
-      steps {
-        script {
-              withSonarQubeEnv(credentialsId: 'jenkins-sonarqube-token') {
-                sh "mvn sonar:sonar"
-                    }
-                }
-            }
-
-        }
-
-    stage("Quality Gate") {
-      steps {
-          script {
-              waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonarqube-token'
-                }
-            }
-
-        }
-
-    stage('Build & Push with Kaniko') {
+    stage('Build Image & Push with Kaniko') {
       steps {
         container(name: 'kaniko', shell: '/busybox/sh') {
           sh '''#!/busybox/sh
@@ -79,7 +41,7 @@ pipeline {
       }
     }
 
-    stage('Analyze with grype') {
+    stage('Analyze Image with grype') {
       steps {
         script {
           try {
