@@ -54,7 +54,7 @@ post {
         recordIssues(
           tools: [grype()],
           aggregatingResults: true,
-          enabledforFailure: true,
+          enabledForFailure: true,
           failedTotalHigh : 35,
         )
     }
