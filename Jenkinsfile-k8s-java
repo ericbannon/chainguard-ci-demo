@@ -1,0 +1,62 @@
+pipeline {
+
+  agent {
+    kubernetes {
+      yamlFile 'kaniko-builder.yaml'
+    }
+  }
+  environment {
+        APP_NAME = "chainguard-demo-app"
+        RELEASE = "1.0.0"
+        DOCKER_USER = "bannimal"
+        IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        /* JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN") */
+
+    }
+
+  stages {
+
+    stage("Cleanup Workspace") {
+      steps {
+        cleanWs()
+      }
+    }
+
+    stage("Build Application from SCM"){
+      steps {
+          git branch: 'main', credentialsId: 'github_pat', url: 'https://github.com/ericbannon/chainguard-ci-demo.git'
+            }
+
+        }
+
+    stage('Build Image & Push with Kaniko') {
+      steps {
+        container(name: 'kaniko', shell: '/busybox/sh') {
+          sh '''#!/busybox/sh
+
+            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
+          '''
+        }
+      }
+    }
+
+    stage('Grype scan') {
+      steps {
+       grypeScan scanDest: 'registry:bannimal/chainguard-demo-app:latest', repName: 'myScanResult.txt', autoInstall:true
+      }
+    }
+
+  } // end stages
+
+post {
+    always {
+        recordIssues(
+          tools: [grype()],
+          aggregatingResults: true,
+          enabledForFailure: true,
+          qualityGates: [[threshold: 35, type: 'HIGH']]
+        )
+    }
+  }
+}
