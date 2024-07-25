@@ -25,7 +25,7 @@ pipeline {
 
     stage("Build Application from SCM"){
       steps {
-          git branch: 'main', credentialsId: 'github_pat', url: 'https://github.com/ericbannon/chainguard-ci-demo.git'
+          git branch: 'chainguard-migration', credentialsId: 'github_pat', url: 'https://github.com/ericbannon/chainguard-ci-demo.git'
             }
 
         }
