@@ -57,10 +57,13 @@ pipeline {
       } // end steps
     } // end stage "analyze with grype"
 
-    stage('Push stable image to Prod') {
+    stage('Push stable image for prod') {
       steps {
-        container('kaniko'){
-          sh "/kaniko/executor --cleanup && mkdir -p /workspace --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:prod"
+        container(name: 'kaniko', shell: '/busybox/sh') {
+          sh '''#!/busybox/sh
+
+            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:prod
+          '''
         }
       }
     }
