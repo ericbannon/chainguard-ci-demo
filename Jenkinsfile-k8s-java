@@ -59,14 +59,10 @@ pipeline {
 
     stage('Push stable image to Prod') {
       steps {
-        container(name: 'kaniko', shell: '/busybox/sh') {
-          sh '''#!/busybox/sh
-
-           /kaniko/executor --cleanup && mkdir -p /workspace  --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
-        '''
+        container('kaniko'){
+          sh "/kaniko/executor --cleanup && mkdir -p /workspace --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:prod
         }
       }
     }
   } // end stages
-
 }
