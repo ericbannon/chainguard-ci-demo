@@ -41,31 +41,23 @@ pipeline {
       }
     }
 
-    stage('Analyze Image with grype') {
+    stage('Grype scan') {
       steps {
-        script {
-          try {
-            sh 'set -o pipefail ; /usr/local/bin/grype -f critical -q ${IMAGE_NAME}:${IMAGE_TAG}'
-          } catch (err) {
-            // if scan fails, clean up (delete the image) and fail the build
-            sh """
-              echo "No vulnerabilities detected in ${IMAGE_NAME}:${IMAGE_TAG}, cleaning up and proceeding with build."
-              exit 0
-            """
-          } // end try/catch
-        } // end script
-      } // end steps
-    } // end stage "analyze with grype"
-
-    stage('Push stable image for prod') {
-      steps {
-        container(name: 'kaniko', shell: '/busybox/sh') {
-          sh '''#!/busybox/sh
-
-            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:prod
-          '''
-        }
+       grypeScan scanDest: 'registry:${IMAGE_NAME}:${IMAGE_TAG}', repName: 'myScanResult.txt', autoInstall:true
       }
     }
+
   } // end stages
+
+post {
+    always {
+        recordIssues(
+          tools: [grype()],
+          aggregatingResults: true,
+          failedTotalCritical: 5, //fail if >=5 Criticals
+          filters: [],
+          //failOnError: true
+        )
+    }
+  }
 }
