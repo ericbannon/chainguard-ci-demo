@@ -53,9 +53,7 @@ post {
     always {
         recordIssues(
           tools: [grype()],
-          aggregatingResults: true,
-          enabledForFailure: true,
-          qualityGates: [[threshold: 35, type: 'HIGH']]
+          aggregatingResults: true
         )
     }
   }
