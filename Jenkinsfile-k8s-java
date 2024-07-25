@@ -55,7 +55,7 @@ post {
           tools: [grype()],
           aggregatingResults: true,
           enabledForFailure: true,
-          qualityGates: [[threshold: 35, type: 'HIGH']
+          qualityGates: [[threshold: 35, type: 'HIGH']]
         )
     }
   }
