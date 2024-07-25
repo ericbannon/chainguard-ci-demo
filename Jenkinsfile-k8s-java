@@ -25,7 +25,7 @@ pipeline {
 
     stage("Build Application from SCM"){
       steps {
-          git branch: 'test', credentialsId: 'github_pat', url: 'https://github.com/ericbannon/chainguard-ci-demo.git'
+          git branch: 'main', credentialsId: 'github_pat', url: 'https://github.com/ericbannon/chainguard-ci-demo.git'
             }
 
         }
@@ -54,8 +54,8 @@ post {
         recordIssues(
           tools: [grype()],
           aggregatingResults: true,
-          failedTotalAll : 35
-          //failOnError: true
+          failedTotalHigh : 35,
+          failOnError: true
         )
     }
   }
