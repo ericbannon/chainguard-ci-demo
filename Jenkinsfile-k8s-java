@@ -10,7 +10,7 @@ pipeline {
         PROJECT_ID = 'presales-demos-430414'
         CLUSTER_NAME = 'se-demo-1'
         LOCATION = 'us-central1-c'
-        CREDENTIALS_ID = 'gke-sa'
+        CREDENTIALS_ID = 'gke-sa-demo'
         RELEASE = "1.0.0"
         DOCKER_USER = "bannimal"
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
