@@ -7,11 +7,16 @@ pipeline {
   }
   environment {
         APP_NAME = "chainguard-demo-app"
+        PROJECT_ID = 'presales-demos-430414'
+        CLUSTER_NAME = 'se-demo-1'
+        LOCATION = 'us-central1-c'
+        CREDENTIALS_ID = 'gke-sa'
         RELEASE = "1.0.0"
         DOCKER_USER = "bannimal"
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
         /* JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN") */
+
 
     }
 
@@ -46,12 +51,17 @@ pipeline {
       }
     }
 
-    stage('Deploy application to GKE test cluster') {
-            steps {
-                script {
-                    kubernetesDeploy(configs: "deployment.yaml")
-                }
-            }
+    stage('Deploy to GKE') {
+            steps{
+                step([
+                $class: 'KubernetesEngineBuilder',
+                projectId: env.PROJECT_ID,
+                clusterName: env.CLUSTER_NAME,
+                location: env.LOCATION,
+                manifestPattern: 'deployment.yaml',
+                credentialsId: env.CREDENTIALS_ID,
+                verifyDeployments: true])
+                  }
         }
 
   } // end stages
