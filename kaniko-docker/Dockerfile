@@ -8,8 +8,6 @@ RUN chmod +x ./kubectl
 
 FROM bannimal/kaniko-kubectl-agent:latest
 
-USER root
-
 COPY --from=builder /usr/local/bin/kubectl /usr/local/bin/kubectl
 
 ENTRYPOINT ["/kaniko/executor"]
