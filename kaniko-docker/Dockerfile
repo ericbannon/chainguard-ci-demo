@@ -6,7 +6,7 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s
 RUN chmod +x ./kubectl
 
 
-FROM bannimal/kaniko-kubectl-agent:latest
+FROM gcr.io/kaniko-project/executor:debug
 
 COPY --from=builder /usr/local/bin/kubectl /usr/local/bin/kubectl
 
