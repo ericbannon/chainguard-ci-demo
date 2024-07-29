@@ -7,7 +7,7 @@ RUN chmod +x ./kubectl
 
 
 FROM gcr.io/kaniko-project/executor:debug
-
+USER root
 COPY --from=builder /usr/local/bin/kubectl /usr/local/bin/kubectl
 
 ENTRYPOINT ["/kaniko/executor", "/usr/local/bin/kubectl"]
