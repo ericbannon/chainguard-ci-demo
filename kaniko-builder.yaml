@@ -2,7 +2,7 @@ kind: Pod
 spec:
   containers:
   - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug
+    image: bannimal/kaniko-executor-kubectl:latest
     imagePullPolicy: Always
     command:
     - sleep
