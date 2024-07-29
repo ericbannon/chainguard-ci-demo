@@ -52,7 +52,7 @@ pipeline {
 
     stage('Deploy to Test Cluster in GKE') {
       steps {
-          container('kubectl') {
+          (name: 'kubectl', shell: '/busybox/sh') {
           sh 'kubectl apply -f deployment.yaml'
        }
       }
