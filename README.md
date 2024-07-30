@@ -78,7 +78,7 @@ CMD ["java", "-jar","demoapp.jar"]
 
 ##### Look at the finished pipeline run results to view Grype scan details of all the vulnerabilities
 
-![Screenshot 2024-07-30 at 9 51 51 AM](https://github.com/user-attachments/assets/b6d1d5e8-6a24-4467-8308-d15070be3de1)
+![Screenshot 2024-07-30 at 10 04 39 AM](https://github.com/user-attachments/assets/89ccf89f-b8bf-4cc9-9f81-bcf7bb5f6614)
 
 The chainguard-demo app should be deployed to your K8s cluster. Check the exposed service and go to the static html page: http://<your-service>/index.html
 
@@ -111,4 +111,4 @@ Click "Scan Multibranch Pipeline Now" to re-run the pipeline
 
 ![Screenshot 2024-07-30 at 9 58 07 AM](https://github.com/user-attachments/assets/e9cddd2f-f158-4b79-bd62-bc946113e2c5)
 
-Check the updated chainguard-demo service to see the same application running but, with low CVEs. 
+Check the updated chainguard-demo service to see the same application running but, with low CVEs!
