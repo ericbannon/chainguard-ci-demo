@@ -86,7 +86,11 @@ CMD ["java", "-jar","demoapp.jar"]
 
 ![Screenshot 2024-07-30 at 10 04 39 AM](https://github.com/user-attachments/assets/89ccf89f-b8bf-4cc9-9f81-bcf7bb5f6614)
 
-The chainguard-demo app should be deployed to your K8s cluster. Check the exposed service and go to the static html page: http://<your-service>/index.html
+The chainguard-demo app should be deployed to your K8s cluster. Check the exposed service and open the URL i.e. 
+
+```
+http://<your-service>:80
+```
 
 ![Screenshot 2024-07-30 at 9 57 01 AM](https://github.com/user-attachments/assets/c964360c-f76e-45ff-a6e7-3777e89571bd)
 
