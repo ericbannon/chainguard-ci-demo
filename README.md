@@ -16,12 +16,18 @@ Fork and clone https://github.com/ericbannon/chainguard-ci-demo.git (with your f
 
 #### Install Jenkins and expose svc
 
+```
 helm repo add jenkins https://charts.jenkins.io
 helm repo update
 
 kubectl expose svc jenkins-demo --type=LoadBalancer --port=8080 --target-port=8080 --name=jenkins-lb
+```
 
-Retrieve admin password:  kubectl exec --namespace default -it svc/jenkins-demo -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+Retrieve admin password:  
+
+```
+kubectl exec --namespace default -it svc/jenkins-demo -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+```
 
 #### Configure plugins for Jenkins
 
