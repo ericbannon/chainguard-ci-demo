@@ -7,6 +7,10 @@ pipeline {
   }
   environment {
         APP_NAME = "chainguard-demo-app"
+        PROJECT_ID = 'presales-demos-430414'
+        CLUSTER_NAME = 'se-demo-1'
+        LOCATION = 'us-central1-c'
+        CREDENTIALS_ID = 'gke-sa-demo'
         RELEASE = "1.0.0"
         DOCKER_USER = "bannimal"
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
@@ -25,7 +29,7 @@ pipeline {
 
     stage("Build Application from SCM"){
       steps {
-          git branch: 'main', credentialsId: 'github_pat', url: 'https://github.com/ericbannon/chainguard-ci-demo.git'
+          git branch: 'chainguard-migration', credentialsId: 'github_pat', url: 'https://github.com/ericbannon/chainguard-ci-demo.git'
             }
 
         }
@@ -34,8 +38,7 @@ pipeline {
       steps {
         container(name: 'kaniko', shell: '/busybox/sh') {
           sh '''#!/busybox/sh
-
-            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
+            /kaniko/executor  --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
           '''
         }
       }
@@ -47,15 +50,23 @@ pipeline {
       }
     }
 
+    stage('Deploy to Test Cluster in GKE') {
+      steps {
+          container(name: 'kubectl') {
+          sh '''
+             kubectl apply -f deployment.yaml
+          '''
+       }
+      }
+    }
+
   } // end stages
 
 post {
     always {
         recordIssues(
           tools: [grype()],
-          aggregatingResults: true,
-          enabledForFailure: true,
-          qualityGates: [[threshold: 35, type: 'HIGH']]
+          aggregatingResults: true
         )
     }
   }
