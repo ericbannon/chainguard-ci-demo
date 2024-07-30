@@ -24,7 +24,10 @@ kubectl expose svc jenkins-demo --type=LoadBalancer --port=8080 --target-port=80
 ```
 
 Retrieve admin password:  
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
 ```
 kubectl exec --namespace default -it svc/jenkins-demo -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
 ```
