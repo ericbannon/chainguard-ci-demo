@@ -3,8 +3,6 @@ spec:
   containers:
   - name: kaniko
     image: gcr.io/kaniko-project/executor:debug
-    securityContext:
-      runAsUser: 0
     imagePullPolicy: Always
     command:
     - sleep
@@ -14,7 +12,7 @@ spec:
       - name: jenkins-docker-cfg
         mountPath: /kaniko/.docker
   - name: kubectl
-    image: cgr.dev/chainguard/kubectl:latest
+    image: cgr.dev/chainguard/kubectl:latest-dev
     securityContext:
       runAsUser: 0
     imagePullPolicy: Always
@@ -22,11 +20,8 @@ spec:
     - sleep
     args:
     - 9999999
-    volumeMounts:
-      - name: jenkins-docker-cfg
-        mountPath: /kaniko/.docker
   - name: cosign
-    image: cgr.dev/chainguard/cosign:latest
+    image: cgr.dev/chainguard/cosign:latest-dev
     securityContext:
       runAsUser: 0
     imagePullPolicy: Always
@@ -34,9 +29,6 @@ spec:
     - sleep
     args:
     - 9999999
-    volumeMounts:
-      - name: jenkins-docker-cfg
-        mountPath: /kaniko/.docker
   volumes:
   - name: jenkins-docker-cfg
     projected:
