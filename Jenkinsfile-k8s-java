@@ -44,7 +44,13 @@ pipeline {
       }
     }
 
-    stage ('Verify image signature with cosign') {
+    stage('Grype scan') {
+      steps {
+       grypeScan scanDest: 'registry:bannimal/chainguard-demo-app:latest', repName: 'myScanResult.txt', autoInstall:true
+      }
+    }
+
+    stage('Verify image signature with cosign') {
       steps {
           container(name: 'cosign') {
           sh '''
@@ -58,7 +64,7 @@ pipeline {
 
     }
 
-    stage ('Download image attestations') {
+    stage('Download image attestations') {
       steps {
           container(name: 'cosign') {
           sh '''
@@ -70,13 +76,6 @@ pipeline {
         }
        }
 
-    }
-
-
-    stage('Grype scan') {
-      steps {
-       grypeScan scanDest: 'registry:bannimal/chainguard-demo-app:latest', repName: 'myScanResult.txt', autoInstall:true
-      }
     }
 
     stage('Deploy to Test Cluster in GKE') {
