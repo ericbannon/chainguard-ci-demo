@@ -44,7 +44,7 @@ pipeline {
       }
     }
 
-    stage {'Verify image signature with cosign'} {
+    stage ('Verify image signature with cosign') {
       steps {
           container(name: 'cosign') {
           sh '''
@@ -58,7 +58,7 @@ pipeline {
 
     }
 
-    stage {'Download image attestations'} {
+    stage ('Download image attestations') {
       steps {
           container(name: 'cosign') {
           sh '''
