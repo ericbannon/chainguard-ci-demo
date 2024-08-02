@@ -44,6 +44,35 @@ pipeline {
       }
     }
 
+    stage('Verify image signature with cosign') {
+      steps {
+          container(name: 'cosign') {
+          sh '''
+             cosign verify \
+                --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+                --certificate-identity=https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main \
+                ${IMAGE_NAME}:${IMAGE_TAG} | jq
+          '''
+       }
+      }
+
+    }
+
+    stage('Download image attestations') {
+      steps {
+          container(name: 'cosign') {
+          sh '''
+             cosign download attestation \
+                --predicate-type=https://spdx.dev/Document \
+                --platform=linux/amd64 \
+                ${IMAGE_NAME}:${IMAGE_TAG}| jq -r .payload | base64 -d | jq .predicate
+          '''
+        }
+       }
+
+    }
+
+
     stage('Grype scan') {
       steps {
        grypeScan scanDest: 'registry:bannimal/chainguard-demo-app:latest', repName: 'myScanResult.txt', autoInstall:true
