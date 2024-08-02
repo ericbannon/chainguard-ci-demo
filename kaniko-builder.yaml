@@ -12,7 +12,19 @@ spec:
       - name: jenkins-docker-cfg
         mountPath: /kaniko/.docker
   - name: kubectl
-    image: bitnami/kubectl:latest
+    image: cgr.dev/chainguard/kubectl:latest
+    securityContext:
+      runAsUser: 0
+    imagePullPolicy: Always
+    command:
+    - sleep
+    args:
+    - 9999999
+    volumeMounts:
+      - name: jenkins-docker-cfg
+        mountPath: /kaniko/.docker
+  - name: cosign
+    image: cgr.dev/chainguard/cosign:latest
     securityContext:
       runAsUser: 0
     imagePullPolicy: Always
