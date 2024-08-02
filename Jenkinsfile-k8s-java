@@ -90,12 +90,12 @@ pipeline {
 
   } // end stages
 
-post {
-    always {
-        recordIssues(
-          tools: [grype()],
-          aggregatingResults: true
-        )
-    }
-  }
-}
+#post {
+#    always {
+#        recordIssues(
+#         tools: [grype()],
+#          aggregatingResults: true
+#        )
+#    }
+#  }
+# }
