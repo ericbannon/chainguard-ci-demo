@@ -50,7 +50,7 @@ pipeline {
       }
     }
 
-    stage('Verify image signature with cosign') {
+    stage('Verify image signatures') {
       steps {
           container(name: 'cosign') {
           sh '''
@@ -61,7 +61,6 @@ pipeline {
           '''
        }
       }
-
     }
 
     stage('Download image attestations') {
@@ -73,9 +72,8 @@ pipeline {
                 --platform=linux/amd64 \
                 ${IMAGE_NAME}:${IMAGE_TAG}| jq -r .payload | base64 -d | jq .predicate
           '''
-        }
        }
-
+      }
     }
 
     stage('Deploy to Test Cluster in GKE') {
@@ -89,4 +87,13 @@ pipeline {
     }
 
   } // end stages
+
+post {
+    always {
+        recordIssues(
+          tools: [grype()],
+          aggregatingResults: true
+        )
+    }
+  }
 }
