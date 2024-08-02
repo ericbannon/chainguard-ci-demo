@@ -58,7 +58,7 @@ pipeline {
 
     }
 
-    stage {'Download image attestations'}
+    stage {'Download image attestations'} {
       steps {
           container(name: 'cosign') {
           sh '''
@@ -67,8 +67,11 @@ pipeline {
                 --platform=linux/amd64 \
                 ${IMAGE_NAME}:${IMAGE_TAG}| jq -r .payload | base64 -d | jq .predicate
           '''
+        }
        }
-      }
+
+    }
+
 
     stage('Grype scan') {
       steps {
