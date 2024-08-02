@@ -72,7 +72,6 @@ pipeline {
 
     }
 
-
     stage('Grype scan') {
       steps {
        grypeScan scanDest: 'registry:bannimal/chainguard-demo-app:latest', repName: 'myScanResult.txt', autoInstall:true
