@@ -93,12 +93,10 @@ pipeline {
 
 post {
     always {
-        script {
-            recordIssues(
-              tools: [grype()],
-              aggregatingResults: true
+        recordIssues(
+          tools: [grype()],
+          aggregatingResults: true
         )
-      }
     }
   }
 }
