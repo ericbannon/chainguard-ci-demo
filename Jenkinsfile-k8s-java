@@ -50,32 +50,6 @@ pipeline {
       }
     }
 
-    stage('Verify image signatures') {
-      steps {
-          container(name: 'cosign') {
-          sh '''
-             cosign verify \
-                --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
-                --certificate-identity=https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main \
-                ${IMAGE_NAME}:${IMAGE_TAG} | jq
-          '''
-       }
-      }
-    }
-
-    stage('Download image attestations') {
-      steps {
-          container(name: 'cosign') {
-          sh '''
-             cosign download attestation \
-                --predicate-type=https://spdx.dev/Document \
-                --platform=linux/amd64 \
-                ${IMAGE_NAME}:${IMAGE_TAG}| jq -r .payload | base64 -d | jq .predicate
-          '''
-       }
-      }
-    }
-
     stage('Deploy to Test Cluster in GKE') {
       steps {
           container(name: 'kubectl') {
@@ -88,4 +62,12 @@ pipeline {
 
   } // end stages
 
+post {
+    always {
+        recordIssues(
+          tools: [grype()],
+          aggregatingResults: true
+        )
+    }
   }
+}
